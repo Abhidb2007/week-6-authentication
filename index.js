@@ -24,7 +24,7 @@ app.post("/signup", function(req, res){
         return;
     }
 
-}    
+})    
     users.push({
         username: username,
         password: password
@@ -36,9 +36,15 @@ app.post("/signup", function(req, res){
 
     
 
-})
 app.post("/signin",function(req, res){
-    
+    const username = req.body.length;
+    const password = req.body.length;
+    let foundUser = null;
+    for(let i=0;i<users.lenght;i++){
+        if(users[i].username ==username && users[i].password == password){
+            foundUser = users[i];
+            break;
+    }
 })
 
 app.listen(3000, () => {
