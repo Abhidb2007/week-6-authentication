@@ -45,6 +45,13 @@ app.post("/signin",function(req, res){
             foundUser = users[i];
         }    
     }
+    if(foundUser){
+        const token =generateToken();
+        foundUser.token = token;
+        res.json({
+            message: "token generated",
+        })
+    }
 })
 
 app.listen(3000, () => {
