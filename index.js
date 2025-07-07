@@ -68,6 +68,28 @@ app.post("/signin", (req, res) => {
     }
 });
 
+app.get("/me", (req, res) => {
+    const token = req.headers.authorization;
+
+    if (!token) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
+    }
+
+    const user = users.find(user => user.token === token);
+
+    if (user) {
+        res.json({
+            message: "Welcome to your profile",
+            username: user.username
+        });
+    } else {
+        res.status(403).json({
+            message: "Invalid token"
+        });
+    }
+});
 // Start the server
 app.listen(3000, () => {
     console.log("Server is running on http://localhost:3000");
