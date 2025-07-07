@@ -4,7 +4,15 @@ const users = [];
 app.post("/signup", function(req, res){
     const username = req.body.username;
     const password = req.body.password;
-    
+
+    if (username.length < 5){
+        res.json({
+            message: "your username is very small"
+        })
+        return;
+    }
+
+}    
     users.push({
         username: username,
         password: password
