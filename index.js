@@ -36,24 +36,29 @@ app.post("/signup", function(req, res){
 
     
 
-app.post("/signin",function(req, res){
-    const username = req.body.length;
-    const password = req.body.length;
-    let foundUser = null;
-    for(let i=0;i<users.lenght;i++){
-        if(users[i].username ==username && users[i].password == password){
-            foundUser = users[i];
-        }    
-    }
-    if(foundUser){
-        const token =generateToken();
-        foundUser.token = token;
-        res.json({
-            message: "token generated",
-        })
-    }
-})
+app.post("/login", function(req, res){
+    const username = req.body.username;
+    const password = req.body.password;
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+    if (username.length < 5){
+        res.json({
+            message: "your username is very small"
+        })
+        return;
+    }
+
+    const user = users.find(user => user.username === username && user.password === password);
+    
+    if (!user) {
+        res.json({
+            message: "Invalid username or password"
+        });
+        return;
+    }
+
+    const token = generateToken();
+    res.json({
+        message: "Login successful",
+        token: token
+    });
 });
