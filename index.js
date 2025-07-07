@@ -43,7 +43,7 @@ app.post("/signin",function(req, res){
     for(let i=0;i<users.lenght;i++){
         if(users[i].username ==username && users[i].password == password){
             foundUser = users[i];
-            break;
+        }    
     }
 })
 
