@@ -19,7 +19,7 @@ app.post("/signup", function(req, res){
 
     if (username.length < 5){
         res.json({
-            message: "your username is very small"
+            message: "hi there",
         })
         return;
     }
