@@ -36,29 +36,22 @@ app.post("/signup", function(req, res){
 
     
 
-app.post("/login", function(req, res){
+app.post("/signin", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    if (username.length < 5){
-        res.json({
-            message: "your username is very small"
-        })
-        return;
-    }
-
     const user = users.find(user => user.username === username && user.password === password);
-    
-    if (!user) {
-        res.json({
-            message: "Invalid username or password"
-        });
-        return;
-    }
 
-    const token = generateToken();
-    res.json({
-        message: "Login successful",
-        token: token
-    });
+    if (user) {
+        const token = generateToken();
+        user.token = token;
+        res.send({
+            token
+        })
+        console.log(users);
+    } else {
+        res.status(403).send({
+            message: "Invalid username or password"
+        })
+    }
 });
