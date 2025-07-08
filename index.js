@@ -72,7 +72,7 @@ app.post("/signin", (req, res) => {
         });
     }
 
-    // Only send error response if user not found
+    
     res.status(403).json({
         message: "Invalid username or password"
     });
