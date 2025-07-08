@@ -86,7 +86,7 @@ app.get("/me", (req, res) => {
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET); // <-- verify token
+        const decoded = jwt.verify(token, JWT_SECRET); 
         const foundUser = users.find(user => user.username === decoded.username && user.token === token);
 
         if (foundUser) {
