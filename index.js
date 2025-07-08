@@ -65,7 +65,7 @@ app.post("/signin", (req, res) => {
             { username: foundUser.username },
             JWT_SECRET
         );
-        // Save the token in the user object
+        
         foundUser.token = token;
 
         return res.json({
