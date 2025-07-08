@@ -1,8 +1,11 @@
 const express = require("express");
+const jwt = require("jsonwebtoken"); // <-- You forgot to import this
 const app = express();
 
-// Middleware to parse JSON request bodies
 app.use(express.json());
+
+// Replace with your own secret key
+const JWT_SECRET = "my-secret-key";
 
 const users = [];
 
@@ -15,7 +18,7 @@ function generateToken() {
     return token;
 }
 
-app.post("/signup", function(req, res) {
+app.post("/signup", function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -29,7 +32,6 @@ app.post("/signup", function(req, res) {
         });
     }
 
-    // Check if user already exists
     const existingUser = users.find(user => user.username === username);
     if (existingUser) {
         return res.status(409).json({
@@ -51,48 +53,56 @@ app.post("/signin", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    const user = users.find(user => user.username === username && user.password === password);
+    let foundUser = null;
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].username === username && users[i].password === password) {
+            foundUser = users[i];
+        }
+    }
 
-    if (user) {
-        const token = generateToken();
-        user.token = token;
-        res.json({
-            message: "Login successful",
-            token: token
-        });
-        
-    } else {
-        res.status(403).json({
-            message: "Invalid username or password"
+    if (foundUser) {
+        const token = jwt.sign(
+            { username: foundUser.username },
+            JWT_SECRET
+        );
+        // Save the token in the user object
+        foundUser.token = token;
+
+        return res.json({
+            token: token,
         });
     }
-    console.log(users); 
+
+    // Only send error response if user not found
+    res.status(403).json({
+        message: "Invalid username or password"
+    });
 });
 
 app.get("/me", (req, res) => {
     const token = req.headers.token;
-    const foundUser = null;
-    for(let i=0;i<users.length;i++){
-        if(users[i].token == token){
-            foundUser = users[i];
-        
-        }
+
+    if (!token) {
+        return res.status(401).json({ message: "Token required" });
     }
-    if(foundUser){
-        res.json({
-            username: foundUser.username,
-            password: foundUser.password
-        
 
-        })
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET); // <-- verify token
+        const foundUser = users.find(user => user.username === decoded.username && user.token === token);
 
-    }else{
-        res.json({
-            message:"token invalid"
-
-        })
+        if (foundUser) {
+            res.json({
+                username: foundUser.username,
+                password: foundUser.password
+            });
+        } else {
+            res.status(403).json({ message: "Token invalid or user not found" });
+        }
+    } catch (err) {
+        res.status(401).json({ message: "Invalid token" });
     }
 });
+
 // Start the server
 app.listen(3000, () => {
     console.log("Server is running on http://localhost:3000");
