@@ -60,12 +60,13 @@ app.post("/signin", (req, res) => {
             message: "Login successful",
             token: token
         });
-        console.log(users); // for debugging
+        
     } else {
         res.status(403).json({
             message: "Invalid username or password"
         });
     }
+    console.log(users); 
 });
 
 app.get("/me", (req, res) => {
